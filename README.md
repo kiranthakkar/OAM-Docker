@@ -1,1 +1,1 @@
-This is just draft version. I will add more comments here later!
+This is a draft version of building OAM docker images on Oracle Linux. It is not meant to be used as in on Production environments.
