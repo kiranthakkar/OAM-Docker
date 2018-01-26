@@ -56,11 +56,11 @@ set('Machine',machine)
 
 cd('/')
 #create('mds-oim', 'JDBCSystemResource')
-cd('JDBCSystemResource/mds-oam/JdbcResource/mds-oam')
+cd('JDBCSystemResource/mds-oim/JdbcResource/mds-oim')
 dataSourceParams=create('dataSourceParams','JDBCDataSourceParams')
 cd('JDBCDataSourceParams/NO_NAME_0')
 print "Setting JNDI Names: "
-set('JNDIName','jdbc/mds/oam')
+set('JNDIName','jdbc/mds/oim')
 cd('/JDBCSystemResource/mds-oam/JdbcResource/mds-oam')
 create('myJdbcDriverParams','JDBCDriverParams')
 cd('JDBCDriverParams/NO_NAME_0')
