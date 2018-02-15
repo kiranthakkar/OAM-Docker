@@ -1,7 +1,3 @@
-#This script will extend the domain.
-
-source setenv.sh
-
 WLST_SCRIPT=$ORACLE_HOME/common/bin/wlst.sh
 
 $WLST_SCRIPT createOAMDomain.py

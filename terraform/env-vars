@@ -1,4 +1,6 @@
-### Authentication details
+#!/bin/bash
+#
+#### Authentication details
 export TF_VAR_tenancy_ocid="ocid1.tenancy.oc1..aaaaaaaawpqblfemtluwxipipubxhioptheej2r32gvf7em7iftkr3vd2r3a"
 export TF_VAR_user_ocid="ocid1.user.oc1..aaaaaaaahq5dvsmntzabgswhjyvs3q2lf3gfmtlgu4gw6dqp2piqk6d3tiwa"
 export TF_VAR_fingerprint="89:c2:1d:30:43:6b:00:2b:3d:7a:14:c8:9c:b1:2d:a2"
@@ -11,7 +13,7 @@ export TF_VAR_region="us-ashburn-1"
 export TF_VAR_compartment_ocid="ocid1.compartment.oc1..aaaaaaaam2z6pdcnnljqpwcz4mnpja434vooojg4wbawwd24xnpuf667rqwq"
 
 ### Public/private keys used on the instance
-export TF_VAR_ssh_public_key=$(cat /scratch/source/sshkeys/id_rsa.pub)
-export TF_VAR_ssh_private_key=$(cat /scratch/source/sshkeys/id_rsa)
+export TF_VAR_ssh_public_key=$(cat /scratch/source/sshkeys/iamuser_rsa.pub)
+export TF_VAR_ssh_private_key=$(cat /scratch/source/sshkeys/iamuser_rsa)
 ## NOTE: These are not your api keys. More info on the right keys see
 ## https://docs.us-phoenix-1.oraclecloud.com/Content/Compute/Tasks/managingkeypairs.htm

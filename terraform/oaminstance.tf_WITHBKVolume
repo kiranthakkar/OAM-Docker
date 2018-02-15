@@ -1,0 +1,82 @@
+resource "oci_core_instance" "OAMTFInstance" {
+  # depends_on = ["oci_database_db_system.IDMDBNode"]
+  availability_domain = "${lookup(data.oci_identity_availability_domains.ADs.availability_domains[var.AD - 1],"name")}"
+  compartment_id = "${var.compartment_ocid}"
+  display_name = "OAMTFInstance"
+  image = "${var.InstanceImageOCID[var.region]}"
+  shape = "${var.InstanceShape}"
+
+  create_vnic_details {
+    subnet_id = "${oci_core_subnet.IDMSubnet.id}"
+    display_name = "primaryvnic"
+    assign_public_ip = true
+    hostname_label = "OAMTFInstance"
+  },
+
+  metadata {
+    ssh_authorized_keys = "${var.ssh_public_key}"
+  }
+
+  timeouts {
+    create = "60m"
+  }
+
+  provisioner "file" {
+	connection {
+		user = "opc"
+		type = "ssh"
+		host = "${data.oci_core_vnic.OAMTFInstanceVnic.public_ip_address}"
+		private_key = "${var.ssh_private_key}"
+		agent = false
+	}
+	source = "userdata/oamscript/"
+	destination = "/home/opc/oamscript"
+  }
+
+  provisioner "remote-exec" {
+        connection {
+                user = "opc"
+		type = "ssh"
+		host = "${data.oci_core_vnic.OAMTFInstanceVnic.public_ip_address}"
+		agent = false
+                private_key = "${var.ssh_private_key}"
+        }
+	inline = [
+	 "chmod +x /home/opc/oamscript/*.sh",
+	 "/home/opc/oamscript/build.sh"
+	]
+  }
+}
+
+resource "oci_core_volume" "OAMVolume" {
+  availability_domain = "${lookup(data.oci_identity_availability_domains.ADs.availability_domains[var.AD - 1],"name")}"
+  compartment_id = "${var.compartment_ocid}"
+  display_name = "OAMVolume"
+  size_in_gbs = "${var.DBSize}"
+}
+
+resource "oci_core_volume_attachment" "OAMBlock0Attach" {
+    attachment_type = "iscsi"
+    compartment_id = "${var.compartment_ocid}"
+    instance_id = "${oci_core_instance.OAMTFInstance.id}"
+    volume_id = "${oci_core_volume.OAMVolume.id}"
+}
+
+resource "null_resource" "remote-exec" {
+    depends_on = ["oci_core_instance.OAMTFInstance","oci_core_volume_attachment.OAMBlock0Attach"]
+    provisioner "remote-exec" {
+      connection {
+        agent = false
+        timeout = "30m"
+        host = "${data.oci_core_vnic.InstanceVnic.public_ip_address}"
+        user = "opc"
+        private_key = "${var.ssh_private_key}"
+    }
+      inline = [
+        "touch ~/IMadeAFile.Right.Here",
+        "sudo iscsiadm -m node -o new -T ${oci_core_volume_attachment.OAMBlock0Attach.iqn} -p ${oci_core_volume_attachment.OAMBlock0Attach.ipv4}:${oci_core_volume_attachment.OAMBlock0Attach.port}",
+        "sudo iscsiadm -m node -o update -T ${oci_core_volume_attachment.OAMBlock0Attach.iqn} -n node.startup -v automatic",
+        "echo sudo iscsiadm -m node -T ${oci_core_volume_attachment.OAMBlock0Attach.iqn} -p ${oci_core_volume_attachment.OAMBlock0Attach.ipv4}:${oci_core_volume_attachment.OAMBlock0Attach.port} -l >> ~/.bashrc"
+      ]
+    }
+}

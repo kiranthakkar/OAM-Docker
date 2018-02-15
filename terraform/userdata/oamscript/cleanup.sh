@@ -1,5 +1,3 @@
-source setenv.sh
-
 RCU_SCRIPT=$INSTALL_BASE/RCU/rcuHome/bin/rcu
 
 #Creating password file

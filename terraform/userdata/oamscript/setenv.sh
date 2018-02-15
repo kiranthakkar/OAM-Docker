@@ -1,5 +1,3 @@
-#Setup environment,
-
 export VERSION=R2PS3
 export ENV=DEV
 export JAVA_HOME=/u01/app/Oracle/java/jdk1.7.0_80
@@ -19,7 +17,7 @@ WLST_SCRIPT=$ORACLE_HOME/common/bin/wlst.sh
 export DOMAIN_USERNAME=weblogic
 export DOMAIN_PASSWORD=Oracle1234
 
-export DB_HOST=10.0.0.14
+export DB_HOST=129.213.104.65
 export DB_PORT=1521
 export DB_SERVICE=IDMR2PS3_iad1d2.sub07121717490.test.oraclevcn.com
 export DB_CONNECTION_STRING=$DB_HOST:$DB_PORT/$DB_SERVICE

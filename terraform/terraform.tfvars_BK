@@ -1,0 +1,15 @@
+### Authentication details
+tenancy_ocid="ocid1.tenancy.oc1..aaaaaaaawpqblfemtluwxipipubxhioptheej2r32gvf7em7iftkr3vd2r3a"
+user_ocid="ocid1.user.oc1..aaaaaaaahq5dvsmntzabgswhjyvs3q2lf3gfmtlgu4gw6dqp2piqk6d3tiwa"
+fingerprint="89:c2:1d:30:43:6b:00:2b:3d:7a:14:c8:9c:b1:2d:a2"
+private_key_path="/scratch/source/sshkeys/oci_api_key.pem"
+
+### Region
+region="us-ashburn-1"
+
+### Compartment
+compartment_ocid="ocid1.compartment.oc1..aaaaaaaam2z6pdcnnljqpwcz4mnpja434vooojg4wbawwd24xnpuf667rqwq"
+
+### Public/private keys used on the instance
+ssh_public_key=$(cat /scratch/source/sshkeys/iamuser_rsa.pub)
+ssh_private_key=$(cat /scratch/source/sshkeys/iamuser_rsa)

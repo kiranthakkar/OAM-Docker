@@ -1,3 +1,4 @@
+#!/bin/bash
 #This script will create Schema.
 
 source setenv.sh
