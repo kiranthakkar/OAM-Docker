@@ -1,7 +1,9 @@
 import os
 
 DOMAIN_DIR=os.environ.get("OIM_DOMAIN_DIR")
-OAM_TEMPLATE=os.environ.get("ORACLE_HOME") + "/common/templates/applications/oracle.oim_11.1.2.0.0_template.jar"
+OIM_TEMPLATE=os.environ.get("ORACLE_HOME") + "/common/templates/applications/oracle.oim_11.1.2.0.0_template.jar"
+JRF_TEMPLATE=os.environ.get("ORACLE_HOME") + "/oracle_common/common/templates/applications/oracle.jrf.ws.async_template_11.1.1.jar"
+OES_TEMPLATE=os.environ.get("ORACLE_HOME") + "/common/templates/applications/oracle.oes_11.1.1.3.0_template.jar"
 DB_PASSWORD=os.environ.get("DB_PASSWORD")
 DB_URL=os.environ.get("DB_URL")
 DB_DRIVER=os.environ.get("DB_DRIVER")
@@ -11,9 +13,17 @@ OPSS_SCHEMA=os.environ.get("OIM_SCHEMA_PREFIX") + "_OPSS"
 SOA_SCHEMA=os.environ.get("OIM_SCHEMA_PREFIX") + "_SOAINFRA"
 BI_SCHEMA=os.environ.get("OIM_SCHEMA_PREFIX") + "_BIPLATFORM"
 UMS_SCHEMA=os.environ.get("OIM_SCHEMA_PREFIX") + "_ORASDPM"
+OIM_JMSFILESTORE=os.environ.get("DOMAIN_DIR") + "/jms/OIMJMSFileStore_auto_1"
+SOA_JMSFILESTORE=os.environ.get("DOMAIN_DIR") + "/jms/SOAJMSFileStore_auto_1"
+BIP_JMSFILESTORE=os.environ.get("DOMAIN_DIR") + "/jms/BipJmsStore"
+BPM_JMSFILESTORE=os.environ.get("DOMAIN_DIR") + "/jms/OIMJMSFileStore_auto_1"
+
+execfile(r'product_config_util.py')
 
 readDomain(DOMAIN_DIR)
+addTemplate(JRF_TEMPLATE)
 addTemplate(OIM_TEMPLATE)
+addTemplate(OES_TEMPLATE)
 
 machine='AdminNode'
 oamCluster='oim_cluster'
@@ -34,6 +44,7 @@ set('Machine',machine)
 
 cd('/')
 create(oimCluster, 'Cluster')
+
 
 cd('/')
 #create(oimServer, 'Server')
@@ -120,83 +131,7 @@ cd('Properties/NO_NAME_0')
 cd('Property/oracle.net.CONNECT_TIMEOUT')
 cmo.setValue('10000')
 
-cd('/')
-#create('oamDS', 'JDBCSystemResource')
-cd('JDBCSystemResource/oamDS/JdbcResource/oamDS')
-dataSourceParams=create('dataSourceParams','JDBCDataSourceParams')
-cd('JDBCDataSourceParams/NO_NAME_0')
-print "Setting JNDI Names: "
-set('JNDIName','jdbc/oamds')
-cd('/JDBCSystemResource/oamDS/JdbcResource/oamDS')
-create('myJdbcDriverParams','JDBCDriverParams')
-cd('JDBCDriverParams/NO_NAME_0')
-set('DriverName',DB_DRIVER)
-set('URL',DB_URL)
-set('PasswordEncrypted',DB_PASSWORD)
-create('myProps','Properties')
-cd('Properties/NO_NAME_0')
-#create('user', 'Property')
-cd('Property/user')
-cmo.setValue(OAM_SCHEMA)
 
-cd('/JDBCSystemResources/oamDS/JdbcResource/oamDS/JDBCDriverParams/NO_NAME_0')
-create('myProps','Properties')
-cd('Properties/NO_NAME_0')
-create('SendStreamAsBlob', 'Property')
-cd('Property/SendStreamAsBlob')
-cmo.setValue('true')
-
-cd('/JDBCSystemResources/oamDS/JdbcResource/oamDS/JDBCDriverParams/NO_NAME_0')
-create('myProps','Properties')
-cd('Properties/NO_NAME_0')
-#create('oracle.net.CONNECT_TIMEOUT', 'Property')
-cd('Property/oracle.net.CONNECT_TIMEOUT')
-cmo.setValue('10000')
-
-cd('/')
-#create('omsm-ds', 'JDBCSystemResource')
-cd('JDBCSystemResource/omsm-ds/JdbcResource/omsm-ds')
-dataSourceParams=create('dataSourceParams','JDBCDataSourceParams')
-cd('JDBCDataSourceParams/NO_NAME_0')
-print "Setting JNDI Names: "
-set('JNDIName','jdbc/omsm-ds')
-cd('/JDBCSystemResource/omsm-ds/JdbcResource/omsm-ds')
-create('myJdbcDriverParams','JDBCDriverParams')
-cd('JDBCDriverParams/NO_NAME_0')
-set('DriverName',DB_DRIVER)
-set('URL',DB_URL)
-set('PasswordEncrypted',DB_PASSWORD)
-create('myProps','Properties')
-cd('Properties/NO_NAME_0')
-#create('user', 'Property')
-cd('Property/user')
-cmo.setValue(OMSM_SCHEMA)
-
-cd('/JDBCSystemResources/omsm-ds/JdbcResource/omsm-ds/JDBCDriverParams/NO_NAME_0')
-create('myProps','Properties')
-cd('Properties/NO_NAME_0')
-#create('oracle.net.CONNECT_TIMEOUT', 'Property')
-cd('Property/oracle.net.CONNECT_TIMEOUT')
-cmo.setValue('10000')
-
-cd('/')
-#create('opss-DBDS', 'JDBCSystemResource')
-cd('JDBCSystemResource/opss-DBDS/JdbcResource/opss-DBDS')
-dataSourceParams=create('dataSourceParams','JDBCDataSourceParams')
-cd('JDBCDataSourceParams/NO_NAME_0')
-print "Setting JNDI Names: "
-set('JNDIName','jdbc/OPSSDBDS')
-cd('/JDBCSystemResource/opss-DBDS/JdbcResource/opss-DBDS')
-create('myJdbcDriverParams','JDBCDriverParams')
-cd('JDBCDriverParams/NO_NAME_0')
-set('DriverName',DB_DRIVER)
-set('URL',DB_URL)
-set('PasswordEncrypted',DB_PASSWORD)
-create('myProps','Properties')
-cd('Properties/NO_NAME_0')
-#create('user', 'Property')
-cd('Property/user')
-cmo.setValue(OPSS_SCHEMA)
 
 cd('/')
 assign('JDBCSystemResource', 'mds-oam', 'Target', policyServer)

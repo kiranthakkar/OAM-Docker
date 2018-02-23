@@ -2,7 +2,7 @@ import os
 
 print os.environ.get("DOMAIN_TEMPLATE")
 DOMAIN_TEMPLATE=os.environ.get("DOMAIN_TEMPLATE")
-DOMAIN_DIR=os.environ.get("OAM_DOMAIN_DIR")
+DOMAIN_DIR=os.environ.get("OIM_DOMAIN_DIR")
 readTemplate(DOMAIN_TEMPLATE)
 
 cd('Servers/AdminServer')
