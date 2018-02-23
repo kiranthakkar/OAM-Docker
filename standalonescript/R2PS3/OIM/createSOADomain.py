@@ -6,14 +6,11 @@ SOA_TEMPLATE=os.environ.get("ORACLE_HOME") + "/soa/common/templates/applications
 DB_PASSWORD=os.environ.get("DB_PASSWORD")
 DB_URL=os.environ.get("DB_URL")
 DB_DRIVER=os.environ.get("DB_DRIVER")
-OIM_SCHEMA=os.environ.get("OIM_SCHEMA_PREFIX") + "_OIM"
 MDS_SCHEMA=os.environ.get("OIM_SCHEMA_PREFIX") + "_MDS"
-OPSS_SCHEMA=os.environ.get("OIM_SCHEMA_PREFIX") + "_OPSS"
 SOA_SCHEMA=os.environ.get("OIM_SCHEMA_PREFIX") + "_SOAINFRA"
-BI_SCHEMA=os.environ.get("OIM_SCHEMA_PREFIX") + "_BIPLATFORM"
 UMS_SCHEMA=os.environ.get("OIM_SCHEMA_PREFIX") + "_ORASDPM"
 
-SOA_JMSFILESTORE=os.environ.get("DOMAIN_DIR") + "/jms/SOAJMSFileStore_auto_1"
+
 
 
 readDomain(DOMAIN_DIR)

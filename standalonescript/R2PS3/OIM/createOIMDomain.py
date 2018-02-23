@@ -13,10 +13,7 @@ OPSS_SCHEMA=os.environ.get("OIM_SCHEMA_PREFIX") + "_OPSS"
 SOA_SCHEMA=os.environ.get("OIM_SCHEMA_PREFIX") + "_SOAINFRA"
 BI_SCHEMA=os.environ.get("OIM_SCHEMA_PREFIX") + "_BIPLATFORM"
 UMS_SCHEMA=os.environ.get("OIM_SCHEMA_PREFIX") + "_ORASDPM"
-OIM_JMSFILESTORE=os.environ.get("DOMAIN_DIR") + "/jms/OIMJMSFileStore_auto_1"
-SOA_JMSFILESTORE=os.environ.get("DOMAIN_DIR") + "/jms/SOAJMSFileStore_auto_1"
-BIP_JMSFILESTORE=os.environ.get("DOMAIN_DIR") + "/jms/BipJmsStore"
-BPM_JMSFILESTORE=os.environ.get("DOMAIN_DIR") + "/jms/OIMJMSFileStore_auto_1"
+
 
 execfile(r'product_config_util.py')
 
@@ -26,11 +23,12 @@ addTemplate(OIM_TEMPLATE)
 addTemplate(OES_TEMPLATE)
 
 machine='AdminNode'
-oamCluster='oim_cluster'
-oamServer='oim_server1'
-soaServer='soa_server1'
-biServer='bi_server1'
+oimCluster='oim_cluster'
+oimServer='oim_server1'
+oimPort=14000
 
+
+## Create Machine
 cd('/')
 create(machine, 'Machine')
 cd('Machine/' + machine)
@@ -42,31 +40,75 @@ set('ListenPort',5658)
 cd('/Servers/AdminServer')
 set('Machine',machine)
 
+#Create Cluster
 cd('/')
 create(oimCluster, 'Cluster')
+cd('/Clusters/'+clusterName)
+cmo.setClusterMessagingMode('unicast')
 
 
+#Set Server
 cd('/')
-#create(oimServer, 'Server')
 cd('Server/' + oimServer)
-set('ListenPort',14000)
+set('ListenPort',oimPort)
 set('Machine',machine)
 set('Cluster',oimCluster)
 
-cd('/')
-#create(soaServer, 'Server')
-cd('Server/' + soaServer)
-set('ListenPort',8001)
-set('Machine',machine)
+#Create JMS File Store Dir
+createJMSFileStore(oimServer,DOMAIN_DIR)
 
 cd('/')
-#create(policyServer, 'Server')
-cd('Server/' + biServer)
-set('ListenPort',9704)
-set('Machine',machine)
+for mod in cmo.getJMSSystemResources():
+    setDistDestType(mod.getName(), 'UDD')
 
+#Datasources
+
+    cd('/JDBCConnectionPool/oimOperationsDB')
+    set("Properties", "user="+OIM_SCHEMA)
+    cd('/JDBCSystemResource/oimOperationsDB/JdbcResource/oimOperationsDB/JDBCDriverParams/NO_NAME_0')
+    cmo.setDriverName('oracle.jdbc.xa.client.OracleXADataSource')
+    cmo.setPasswordEncrypted(DB_PASSWORD)
+    cmo.setUrl(DB_URL)
+
+    cd('/JDBCConnectionPool/mds-oim')
+    set("Properties", "user="+MDS_SCHEMA)
+    cd('/JDBCSystemResource/mds-oim/JdbcResource/mds-oim/JDBCDriverParams/NO_NAME_0')
+    cmo.setDriverName('oracle.jdbc.OracleDriver')
+    cmo.setPasswordEncrypted(DB_PASSWORD)
+    cmo.setUrl(DB_URL)
+
+    cd('/JDBCConnectionPool/oimJMSStoreDS')
+    set("Properties", "user="+OIM_SCHEMA)
+    cd('/JDBCSystemResource/oimJMSStoreDS/JdbcResource/oimJMSStoreDS/JDBCDriverParams/NO_NAME_0')
+    cmo.setDriverName('oracle.jdbc.OracleDriver')
+    cmo.setPasswordEncrypted(DB_PASSWORD)
+    cmo.setUrl(DB_URL)
+
+    cd('/JDBCConnectionPool/soaOIMLookupDB')
+    set("Properties", "user="+OIM_SCHEMA)
+    cd('/JDBCSystemResource/soaOIMLookupDB/JdbcResource/soaOIMLookupDB/JDBCDriverParams/NO_NAME_0')
+    cmo.setDriverName('oracle.jdbc.xa.client.OracleXADataSource')
+    cmo.setPasswordEncrypted(DB_PASSWORD)
+    cmo.setUrl(DB_URL)
+
+    # cd('/JDBCConnectionPool/opss-DBDS')
+    # cmo.setDriverName('oracle.jdbc.OracleDriver')
+    # cmo.setPasswordEncrypted('<ENCRYPTED VALUE>')
+    # set("Properties","user=OIG_OPSS;portNumber=1521;serverName=snake.democo.com")
+    # cmo.setURL('jdbc:oracle:thin:@snake.democo.com:1521:%PROVISIONING.IDMPROV.OIM.DB.SID%')
+
+    cd('/JDBCConnectionPool/ApplicationDB')
+    set("Properties", "user="+OIM_SCHEMA)
+    cd('/JDBCSystemResource/ApplicationDB/JdbcResource/ApplicationDB/JDBCDriverParams/NO_NAME_0')
+    cmo.setDriverName('oracle.jdbc.OracleDriver')
+    cmo.setPasswordEncrypted(DB_PASSWORD)
+    cmo.setUrl(DB_URL)
+
+#End DataSources
+
+
+"""
 cd('/')
-#create('mds-oim', 'JDBCSystemResource')
 cd('JDBCSystemResource/mds-oim/JdbcResource/mds-oim')
 dataSourceParams=create('dataSourceParams','JDBCDataSourceParams')
 cd('JDBCDataSourceParams/NO_NAME_0')
@@ -151,6 +193,7 @@ assign('JDBCSystemResource', 'opss-DBDS', 'Target', policyServer)
 assign('JDBCSystemResource', 'opss-DBDS', 'Target', soaServer)
 
 updateDomain()
+"""
 
 exit()
 
