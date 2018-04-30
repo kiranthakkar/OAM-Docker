@@ -12,7 +12,7 @@ ${OUD_HOME}/oud-setup \
 --baseDN "${OUD_BASEDN}" \
 --ldapPort 1389 \
 --adminConnectorPort 4444 \
---rootUserDN "${OUD_ROOTUSERNAME}" \
+--rootUserDN "cn=Directory Manager" \
 --rootUserPasswordFile ${OUD_HOME}/rootUserPwd.txt \
 --enableStartTLS \
 --ldapsPort 1636 \
@@ -23,8 +23,8 @@ ${OUD_HOME}/oud-setup \
 
 # Get OUD LDAP Status
 $OUD_INSTANCE/OUD/bin/status \
---bindDN "$OUD_ROOTUSERNAME" \
---bindPasswordFile ${OUD_HOME}/rootUserPwd.txt 
+--bindDN "cn=Directory Manager" \
+--bindPasswordFile ${OUD_HOME}/rootUserPwd.txt \
 --no-prompt
 
 # Clean up root user password file
